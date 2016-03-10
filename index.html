@@ -340,6 +340,55 @@ html,body{height:100%;}
 			}
 		};
 		
+		
+		$scope.previousConsumption = 10;
+		$scope.validate = function(){
+			var val = $scope.consumption;
+			//var regex = /^[0-9]*[\.[0-9]*]?$/gm;
+			var regex = /^[0-9]*(\.[0-9]*)?$/gm;
+			if(regex.test(val)){
+				
+				
+				var lastChar = val.substring(val.length-1,val.length)
+				if(lastChar == '.' || lastChar == ','){
+					val = val.substring(0, val.length-1);
+				}
+				var c = parseFloat(val);
+				if(isNaN(c)){
+					$scope.consumption = $scope.previousConsumption;
+				}else{
+					$scope.previousConsumption = $scope.consumption;
+				}			
+			}
+			else{
+				$scope.consumption = $scope.previousConsumption;
+			}	
+		};
+		
+		$scope.previousPrice = 10;
+		$scope.validatePrice = function(){
+			var val = $scope.price;
+			//var regex = /^[0-9]*[\.[0-9]*]?$/gm;
+			var regex = /^[0-9]*(\.[0-9]*)?$/gm;
+			if(regex.test(val)){
+				
+				
+				var lastChar = val.substring(val.length-1,val.length)
+				if(lastChar == '.' || lastChar == ','){
+					val = val.substring(0, val.length-1);
+				}
+				var c = parseFloat(val);
+				if(isNaN(c)){
+					$scope.price = $scope.previousPrice;
+				}else{
+					$scope.previousPrice = $scope.price;
+				}			
+			}
+			else{
+				$scope.price = $scope.previousPrice;
+			}	
+		};		
+		
 		$scope.compute = function() {
 		
 			if($scope.computing &&  $scope.currentRequestIndex < $scope.postalCodes.length-1) {
@@ -566,6 +615,8 @@ html,body{height:100%;}
 });	  
 
 
+
+
     </script>
 </head>
 
@@ -600,21 +651,23 @@ html,body{height:100%;}
 				title="Enables the Distance Matrix mode (25 requests/10Seconds);
 Checking this will automatically disable transit computation!
 Unchecking this will request routes for each points, and will require 2 seconds per points.">
-					<label><input name="enableFast" type="checkbox" ng-model="enableFast"  >Enable Fast</label>
+					<label><input name="enableFast" type="checkbox" ng-model="enableFast" ng-disabled="computing" >Enable Fast</label>
 				</div>
 				
 				<div class="checkbox" data-toggle="tooltip" 
 				title="Enables transit computation; 
 checking this will provide transit duration information when downloading the csv;
 checking this will require 5 seconds per points.">
-					<label><input type="checkbox" ng-model="enableTransitComputing">Enable Transit Computation</label>
+					<label><input type="checkbox" ng-model="enableTransitComputing" ng-disabled="computing">Enable Transit Computation</label>
 				</div>
 				
-				<label for="consumption">Average Consumption (L/100):</label>
-				<input type="number" class="form-control" id="consumption" ng-model="consumption" step=".1">
-				  
+				<form id="integerForm">
+					<label for="consumption">Average Consumption (L/100):</label>
+					<input type="text" class="form-control" id="consumption" ng-model="consumption" ng-change="validate()" step=".1">
+				</form>				
+				
 				<label for="price">Gas Price ($):</label>
-				<input type="number" class="form-control" id="price" ng-model="price" step=".1">
+				<input type="text" class="form-control" id="price" ng-model="price" ng-change="validatePrice()" step=".1">
 			</div>			
 		</div>		
 	</div>
